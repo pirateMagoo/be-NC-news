@@ -3,7 +3,7 @@ const db = require('../db/connection');
 const app = require('../db/app');
 const data = require('../db/data/test-data/index.js');
 const seed = require('../db/seeds/seed');
-
+const endpoints = require('../endpoints.json')
 
 beforeAll(() => seed(data));
 afterAll(() => db.end());
@@ -20,7 +20,6 @@ describe('GET api topics', () => {
         .then(({ body }) => {
             const topics = body.topics;
             expect(topics).toHaveLength(3);
-            console.log('Here are the topics:', topics);
             topics.forEach((topic) => {
                expect(topic).toMatchObject({
                 description: expect.any(String),
@@ -35,3 +34,19 @@ describe('GET api topics', () => {
         })
     })
 })
+
+describe('GET api', () => {
+    test('200: response, we expect a 200 status response', () => {
+        return request(app).get('/api').expect(200);
+    })
+    test('200: responds with a JSON object that describes all available endpoints', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toEqual(endpoints);
+        })
+    })
+})
+            
+            
