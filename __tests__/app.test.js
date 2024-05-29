@@ -4,6 +4,7 @@ const app = require('../db/app');
 const data = require('../db/data/test-data/index.js');
 const seed = require('../db/seeds/seed');
 const endpoints = require('../endpoints.json')
+require('jest-sorted');
 
 beforeAll(() => seed(data));
 afterAll(() => db.end());
@@ -63,15 +64,26 @@ describe('GET api', () => {
                     title: expect.any(String),
                     topic: expect.any(String),
                     author: expect.any(String),
-                    body: expect.any(String),
                     created_at: expect.any(String),
                     votes: expect.any(Number),
+                    article_img_url: expect.any(String),
                     comment_count: expect.any(Number)
                 })
+                expect(article).not.toHaveProperty('body')
             })
         })
     })
+    test('GET 200: articles are sorted by date in descending order', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            const { articles } = body;
+            expect(articles).toBeSortedBy('created_at', {descending: true}) 
+        })
+    })
  })
+                    
 
  describe('GET /api/articles/:article_id', () => {
      test('GET 200: sends a single article to the client when given an appropriate article_id', () => {
@@ -81,7 +93,7 @@ describe('GET api', () => {
          .then(({body}) => {
             const article = body.article;
             expect(article).toMatchObject({
-              article_id: expect.any(Number),
+              article_id: 1,
               title: expect.any(String),
               topic: expect.any(String),
               author: expect.any(String),
