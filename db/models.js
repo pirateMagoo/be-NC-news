@@ -13,10 +13,10 @@ function fetchArticles() {
     LEFT JOIN comments ON articles.article_id = comments.article_id
     GROUP BY articles.article_id
     ORDER BY articles.created_at DESC;`).then(({rows}) => {
-        console.log(rows)
         return rows;
     })
 };
+
         
 
 function fetchArticleById(article_id) {
