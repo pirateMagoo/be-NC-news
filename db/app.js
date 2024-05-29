@@ -1,5 +1,5 @@
 const express = require('express');
-const { getTopics, getApi, getArticles, getArticleById } = require('../db/controllers');
+const { getTopics, getApi, getArticles, getArticleById, getCommentsByArticleId } = require('../db/controllers');
 const app = express();
 
 
@@ -8,7 +8,7 @@ app.get('/api', getApi);
 app.get('/api/topics', getTopics);
 app.get('/api/articles', getArticles);
 app.get('/api/articles/:article_id', getArticleById);
-
+app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
 
 app.use((err, req, res, next) => {
   if(err.code === '22P02') {
