@@ -1,5 +1,7 @@
-const { fetchTopics, fetchArticles, fetchArticleById } = require('../db/models')
+const { fetchTopics, fetchArticles, fetchArticleById, fetchCommentsByArticleId } = require('../db/models')
 const endpoints = require('../endpoints.json')
+const {  checkArticleExists } = require('../db/comments.models')
+
 
 function getTopics (req, res) {
     fetchTopics().then((topics) => {
@@ -31,9 +33,29 @@ function getArticleById (req, res, next) {
     })
     .catch(next)
 }
+
+function getCommentsByArticleId (req, res, next) {
+    const { article_id } = req.params;
+    
+    
+    const promises = [fetchCommentsByArticleId(article_id)];
+
+    if(article_id) {
+        promises.push(checkArticleExists(article_id))
+    };
+
+    Promise.all(promises)
+    .then((resolvedPromises) => {
+        const comments = resolvedPromises[0]
+        res.status(200).send({comments});
+    })
+    .catch(next)
+}
+
+    
     
         
 
 
 
-module.exports = { getTopics, getApi, getArticles, getArticleById };
+module.exports = { getTopics, getApi, getArticles, getArticleById, getCommentsByArticleId};
