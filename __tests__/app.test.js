@@ -49,4 +49,73 @@ describe('GET api', () => {
     })
 })
             
+ describe('GET /api/articles', () => {
+    test('GET 200: should return an array of objects containing all articles', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            const articles = body.articles;
+            expect(articles).toHaveLength(13);
+            articles.forEach((article) => {
+                expect(article).toMatchObject({
+                    article_id: expect.any(Number),
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    comment_count: expect.any(Number)
+                })
+            })
+        })
+    })
+ })
+
+ describe('GET /api/articles/:article_id', () => {
+     test('GET 200: sends a single article to the client when given an appropriate article_id', () => {
+         return request(app)
+         .get('/api/articles/1')
+         .expect(200)
+         .then(({body}) => {
+            const article = body.article;
+            expect(article).toMatchObject({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String)
+            }); 
+        })
+     }) 
+     test('GET 404: sends an appropriate status and error message when sent a valid but non-existant article_id', () => {
+        return request(app)
+        .get('/api/articles/750')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+     })  
+     test('GET 400: sends an appropriate status and error message when passed an invalid article_id', () => {
+        return request(app)
+        .get('/api/articles/not-an-id')
+        .expect(400)
+        .then(({body}) => {
+          expect(body.msg).toBe('Bad Request') 
+        })
+     })        
+}) 
+            
+             
+
+
+
+
+
+            
+              
             
