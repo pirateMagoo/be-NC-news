@@ -6,6 +6,7 @@ const {
   addCommentToArticle,
   updateArticleVotes,
   removeCommentById,
+  fetchAllUsers
 } = require("./models");
 const endpoints = require("../endpoints.json");
 const { checkArticleExists, checkUsernameExists, checkCommentExists } = require("./comments.models");
@@ -86,6 +87,8 @@ function postCommentToArticle(req, res, next) {
         const { article_id } = req.params;
         const { inc_votes } = req.body;
 
+      
+        
         const promises = [checkArticleExists(article_id)];
 
         Promise.all(promises)
@@ -113,9 +116,17 @@ function postCommentToArticle(req, res, next) {
           res.status(204).send();
         })
         .catch(next);
-    }
+    };
 
 
+    function getAllUsers(req, res , next) {
+        fetchAllUsers()
+        .then((users) => {
+            res.status(200).send({ users })
+        })
+        .catch(next)
+    };
+            
         
         
         
@@ -133,5 +144,6 @@ module.exports = {
   getCommentsByArticleId,
   postCommentToArticle,
   patchArticleVotes,
-  deleteCommentById
+  deleteCommentById,
+  getAllUsers
 };
