@@ -46,8 +46,19 @@ function addCommentToArticle(article_id, username, body) {
         return rows[0];
     })
 }
+
+function updateArticleVotes(article_id, inc_votes) {
+    return db.query(`
+    UPDATE articles
+    SET votes = votes + $2
+    WHERE article_id = $1
+    RETURNING*`, [article_id, inc_votes])
+    .then(({rows}) => {
+        return rows;
+    })
+}
         
         
 
 
-module.exports = { fetchTopics, fetchArticles, fetchArticleById, fetchCommentsByArticleId, addCommentToArticle };
+module.exports = { fetchTopics, fetchArticles, fetchArticleById, fetchCommentsByArticleId, addCommentToArticle, updateArticleVotes };
