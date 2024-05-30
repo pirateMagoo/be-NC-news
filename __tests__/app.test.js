@@ -1,6 +1,6 @@
 const request = require('supertest');
 const db = require('../db/connection');
-const app = require('../db/app');
+const app = require('../api-files/app.js');
 const data = require('../db/data/test-data/index.js');
 const seed = require('../db/seeds/seed');
 const endpoints = require('../endpoints.json')
@@ -167,6 +167,69 @@ describe('GET /api/articles/:article_id/comments', () => {
         .then(({body}) => {
             expect(body.msg).toBe('Bad Request')
         })
+    })
+})
+
+describe('POST /api/articles/:article_id/comments', () => {
+    test('POST 201: adds a new comment to the article with the provided article_id', () => {
+        const newComment = {
+            username: 'lurker',
+            body: 'just lurkin about'
+        }
+
+        return request(app)
+        .post('/api/articles/7/comments')
+        .send(newComment)
+        .expect(201)
+        .then(({body}) => {
+            const { comment } = body;
+            expect(comment).toMatchObject({
+                comment_id: expect.any(Number),
+                body: 'just lurkin about',
+                votes: 0,
+                author: 'lurker',
+                article_id: 7,
+                created_at: expect.any(String)
+            });
+        });
+    })
+    test('POST 400: responds with an appropriate status and error message when missing the required fields', () => {
+        const newComment1 = {};
+
+        return request(app)
+        .post('/api/articles/7/comments')
+        .send(newComment1)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+    test('POST 404: responds with an appropriate status and error message when article_id does not exist', () => {
+        const newComment2 = {
+            username: 'lurker',
+            body: 'been lurkin all my life'
+        }
+        
+        return request(app)
+        .post('/api/articles/999/comments')
+        .send(newComment2)
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    })
+    test('POST 404: responds with an appropriate status and error message when username does not exist', () => {
+        const newComment3 = {
+            username: 'flandingus',
+            body: 'I want to lurk about too'
+        }
+        return request(app)
+        .post('/api/articles/7/comments')
+        .send(newComment3)
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })   
     })
 })
 
