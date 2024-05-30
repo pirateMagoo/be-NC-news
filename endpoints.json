@@ -54,6 +54,23 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "posts a new comment to the article with the given article_id",
+    "exampleRequest": {
+      "username": "lurker",
+      "body": "just lurkin about"
+    },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 74,
+        "body": "just lurkin about",
+        "article_id": 7,
+        "author": "lurker",
+        "votes": 0,
+        "created_at": "2020-05-15T20:19:00.000Z"
+      }
+    }
   }
 
 }
