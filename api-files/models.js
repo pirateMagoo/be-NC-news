@@ -64,8 +64,17 @@ function removeCommentById(comment_id) {
     WHERE comment_id = $1`, [comment_id])
    
 }
+
+
+function fetchAllUsers() {
+    return db.query(`
+    SELECT * FROM users`)
+    .then(({rows}) => {
+        return rows
+    })
+}
         
         
 
 
-module.exports = { fetchTopics, fetchArticles, fetchArticleById, fetchCommentsByArticleId, addCommentToArticle, updateArticleVotes, removeCommentById };
+module.exports = { fetchTopics, fetchArticles, fetchArticleById, fetchCommentsByArticleId, addCommentToArticle, updateArticleVotes, removeCommentById, fetchAllUsers };

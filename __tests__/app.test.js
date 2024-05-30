@@ -254,6 +254,7 @@ describe('PATCH /api/articles/:article_id', () => {
             }]);
         })
     })
+    
     test("PATCH 200: decreases article votes and responds with the updated article and appropriate status", () => {
         return request(app)
         .patch("/api/articles/1")
@@ -278,6 +279,15 @@ describe('PATCH /api/articles/:article_id', () => {
         return request(app)
         .patch("/api/articles/1")
         .send({ inc_votes: "stringy"})
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+    test('PATCH 400: responds with an appropriate status and error message when passed an invalid article_id', () => {
+        return request(app)
+        .patch('/api/articles/invalid-id')
+        .send({ inc_votes: 1})
         .expect(400)
         .then(({body}) => {
             expect(body.msg).toBe('Bad Request')
@@ -315,7 +325,25 @@ describe("DELETE /api/comments/comment_id", () => {
       });
   });
 });
-                  
+  
+describe('GET /api/users', () => {
+    test('GET 200: responds with an array of objects containing all currently registered users', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({body}) => {
+            const { users } = body;
+            expect(users).toBeInstanceOf(Array);
+            users.forEach((user) => {
+                expect(user).toMatchObject({
+                    username: expect.any(String),
+                    name: expect.any(String),
+                    avatar_url: expect.any(String)
+                })
+            })
+        })
+    })
+})
               
                 
 
