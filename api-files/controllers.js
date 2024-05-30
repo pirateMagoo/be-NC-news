@@ -4,10 +4,11 @@ const {
   fetchArticleById,
   fetchCommentsByArticleId,
   addCommentToArticle,
-  updateArticleVotes
+  updateArticleVotes,
+  removeCommentById,
 } = require("./models");
 const endpoints = require("../endpoints.json");
-const { checkArticleExists, checkUsernameExists } = require("./comments.models");
+const { checkArticleExists, checkUsernameExists, checkCommentExists } = require("./comments.models");
 
 function getTopics(req, res) {
   fetchTopics().then((topics) => {
@@ -97,6 +98,24 @@ function postCommentToArticle(req, res, next) {
         })
         .catch(next)
     }
+
+
+    function deleteCommentById(req, res, next) {
+      const { comment_id } = req.params;
+
+      const promises = [checkCommentExists(comment_id)];
+
+      Promise.all(promises)
+        .then(() => {
+          return removeCommentById(comment_id);
+        })
+        .then(() => {
+          res.status(204).send();
+        })
+        .catch(next);
+    }
+
+
         
         
         
@@ -113,5 +132,6 @@ module.exports = {
   getArticleById,
   getCommentsByArticleId,
   postCommentToArticle,
-  patchArticleVotes
+  patchArticleVotes,
+  deleteCommentById
 };
