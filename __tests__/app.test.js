@@ -83,6 +83,31 @@ describe('GET api', () => {
         })
     })
  })
+
+ describe('GET /api/articles?topic', () => {
+    test('GET 200: responds with articles filtered by the topic specified in the query', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch')
+        .expect(200)
+        .then(({body}) => {
+            const { articles } = body;
+            expect(articles).toHaveLength(12);
+            expect(articles).toBeInstanceOf(Array);
+            articles.forEach((article) => {
+                expect(article.topic).toBe('mitch')
+            })
+        })
+    })
+    test('GET 404: responds with appropriate status and error message when given a non-existant topic', () => {
+        return request(app)
+        .get('/api/articles?topic=flamingo')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    })
+})
+   
                     
 
  describe('GET /api/articles/:article_id', () => {
@@ -333,6 +358,7 @@ describe('GET /api/users', () => {
         .expect(200)
         .then(({body}) => {
             const { users } = body;
+            expect(users).toHaveLength(4);
             expect(users).toBeInstanceOf(Array);
             users.forEach((user) => {
                 expect(user).toMatchObject({

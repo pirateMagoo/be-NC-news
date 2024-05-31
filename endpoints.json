@@ -10,8 +10,8 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "serves an array of all articles. Accepts an optional topic query to filter articles by topic",
+    "queries": ["topic"],
     "exampleResponse": {
       "articles": [
         {

@@ -22,12 +22,17 @@ function getApi(req, res) {
 }
 
 function getArticles(req, res, next) {
-  fetchArticles()
-    .then((articles) => {
-      res.status(200).send({ articles });
-    })
-    .catch(next);
+  const { topic } = req.query;
+  fetchArticles(topic)
+  .then((articles) => {
+    if(!articles.length) {
+        next()
+    }
+    res.status(200).send({ articles });
+  })
+  .catch(next);
 }
+  
 
 function getArticleById(req, res, next) {
   const { article_id } = req.params;
@@ -87,11 +92,7 @@ function postCommentToArticle(req, res, next) {
         const { article_id } = req.params;
         const { inc_votes } = req.body;
 
-      
-        
-        const promises = [checkArticleExists(article_id)];
-
-        Promise.all(promises)
+        checkArticleExists(article_id)
         .then(() => {
             return updateArticleVotes(article_id, inc_votes)
         })
@@ -101,22 +102,26 @@ function postCommentToArticle(req, res, next) {
         })
         .catch(next)
     }
+      
+        
+
+        
 
 
     function deleteCommentById(req, res, next) {
       const { comment_id } = req.params;
 
-      const promises = [checkCommentExists(comment_id)];
+      checkCommentExists(comment_id)
+      .then(() => {
+        return removeCommentById(comment_id);
+      })
+      .then(() => {
+        res.status(204).send();
+      })
+      .catch(next);
+  };
 
-      Promise.all(promises)
-        .then(() => {
-          return removeCommentById(comment_id);
-        })
-        .then(() => {
-          res.status(204).send();
-        })
-        .catch(next);
-    };
+      
 
 
     function getAllUsers(req, res , next) {
