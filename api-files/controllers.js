@@ -110,17 +110,17 @@ function postCommentToArticle(req, res, next) {
       function deleteCommentById(req, res, next) {
         const { comment_id } = req.params;
   
-        const promises = [checkCommentExists(comment_id)];
+        checkCommentExists(comment_id)
+        .then(() => {
+          return removeCommentById(comment_id);
+        })
+        .then(() => {
+          res.status(204).send();
+        })
+        .catch(next);
+    };
   
-        Promise.all(promises)
-          .then(() => {
-            return removeCommentById(comment_id);
-          })
-          .then(() => {
-            res.status(204).send();
-          })
-          .catch(next);
-      };
+       
   
   
       function getAllUsers(req, res , next) {
