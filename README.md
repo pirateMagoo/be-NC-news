@@ -1,5 +1,18 @@
 # Northcoders News API
 
+
+
+## Description
+
+Northcoders News API is a portfolio project created during a skills bootcamp. This project serves as a backend for a news website, providing endpoints to manage articles, comments, users, and topics.
+
+
+## Hosted Version
+
+You can find the hosted version of this project here: https://nc-news-mwo0.onrender.com/api
+
+
+
 ## Installation
 
 Clone the repository.
@@ -30,6 +43,16 @@ Into each, add PGDATABASE=, with the correct database name for that environment 
 
 npm run setup-dbs
 npm run seed
+
+## Run Tests
+
+npm test
+
+
+## Minimum Requirements
+
+Node.js: v14.0.0 or higher
+PostgreSQL: v12.0 or higher
 
 
 
