@@ -87,46 +87,66 @@ function postCommentToArticle(req, res, next) {
         const { article_id } = req.params;
         const { inc_votes } = req.body;
 
-      
+        if(inc_votes === undefined) {
+          return fetchArticleById(article_id)
+          .then((article) => {
+            res.status(200).send({ article })
+          })
+          .catch(next)
+        };
         
-        const promises = [checkArticleExists(article_id)];
-
-        Promise.all(promises)
+        checkArticleExists(article_id)
         .then(() => {
             return updateArticleVotes(article_id, inc_votes)
         })
         .then((updatedArticle) => {
             res.status(200).send({ article: updatedArticle })
+          })
+          .catch(next)
+      }
 
-        })
-        .catch(next)
-    }
+        
+          
+      function deleteCommentById(req, res, next) {
+        const { comment_id } = req.params;
+  
+        const promises = [checkCommentExists(comment_id)];
+  
+        Promise.all(promises)
+          .then(() => {
+            return removeCommentById(comment_id);
+          })
+          .then(() => {
+            res.status(204).send();
+          })
+          .catch(next);
+      };
+  
+  
+      function getAllUsers(req, res , next) {
+          fetchAllUsers()
+          .then((users) => {
+              res.status(200).send({ users })
+          })
+          .catch(next)
+      };
+              
+      module.exports = {
+        getTopics,
+        getApi,
+        getArticles,
+        getArticleById,
+        getCommentsByArticleId,
+        postCommentToArticle,
+        patchArticleVotes,
+        deleteCommentById,
+        getAllUsers
+      };
+
+        
+        
 
 
-    function deleteCommentById(req, res, next) {
-      const { comment_id } = req.params;
-
-      const promises = [checkCommentExists(comment_id)];
-
-      Promise.all(promises)
-        .then(() => {
-          return removeCommentById(comment_id);
-        })
-        .then(() => {
-          res.status(204).send();
-        })
-        .catch(next);
-    };
-
-
-    function getAllUsers(req, res , next) {
-        fetchAllUsers()
-        .then((users) => {
-            res.status(200).send({ users })
-        })
-        .catch(next)
-    };
-            
         
         
         
@@ -136,14 +156,3 @@ function postCommentToArticle(req, res, next) {
    
         
 
-module.exports = {
-  getTopics,
-  getApi,
-  getArticles,
-  getArticleById,
-  getCommentsByArticleId,
-  postCommentToArticle,
-  patchArticleVotes,
-  deleteCommentById,
-  getAllUsers
-};
