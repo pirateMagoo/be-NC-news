@@ -30,9 +30,10 @@ function getArticles(req, res, next) {
   fetchArticles(topic, sort_by, order)
     .then((articles) => {
       if (!articles.length) {
-        next();
-      }
+        res.status(404).send({ msg: "Not Found" });
+      } else {
       res.status(200).send({ articles });
+      }
     })
     .catch(next);
 }
@@ -42,9 +43,10 @@ function getArticleById(req, res, next) {
   fetchArticleById(article_id)
     .then((article) => {
       if (!article) {
-        next();
-      }
+        res.status(404).send({ msg: "Not Found" });
+      } else {
       res.status(200).send({ article });
+    }
     })
     .catch(next);
 }
