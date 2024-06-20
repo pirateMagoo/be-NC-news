@@ -82,6 +82,74 @@ describe('GET api', () => {
             expect(articles).toBeSortedBy('created_at', {descending: true}) 
         })
     })
+    test('GET 200: should return articles sorted by created_at in descending order by default', () => {
+        return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles).toBeSortedBy('created_at', { descending: true });
+            });
+    });
+
+    test('GET 200: should return articles sorted by votes in ascending order', () => {
+        return request(app)
+            .get('/api/articles?sort_by=votes&order=asc')
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles).toBeSortedBy('votes', { descending: false });
+            });
+    });
+
+    test('GET 200: should return articles sorted by comment_count in descending order', () => {
+        return request(app)
+            .get('/api/articles?sort_by=comment_count&order=desc')
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles).toBeSortedBy('comment_count', { descending: true });
+            });
+    });
+
+    test('GET 200: should filter articles by topic and sort by created_at in descending order', () => {
+        return request(app)
+            .get('/api/articles?topic=mitch')
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles).toBeInstanceOf(Array);
+                articles.forEach((article) => {
+                    expect(article.topic).toBe('mitch');
+                });
+                expect(articles).toBeSortedBy('created_at', { descending: true });
+            });
+    });
+
+    test('GET 400: responds with an error for an invalid sort_by query', () => {
+        return request(app)
+            .get('/api/articles?sort_by=invalid')
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles).toBeSortedBy('created_at', { descending: true }); // Default sorting
+            });
+    });
+
+    test('GET 400: responds with an error for an invalid order query', () => {
+        return request(app)
+            .get('/api/articles?order=invalid')
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles).toBeSortedBy('created_at', { descending: true }); // Default order
+            });
+    });
  })
 
  describe('GET /api/articles?topic', () => {
