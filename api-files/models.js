@@ -13,12 +13,12 @@ function fetchArticles(topic, sort_by = 'created_at', order = 'desc') {
 
     
     if (!validSortBy.includes(sort_by)) {
-        sort_by = 'created_at';
+        return Promise.reject({ status: 400, msg: 'Invalid sort_by query' });
     }
 
     
     if (!validOrder.includes(order)) {
-        order = 'desc';
+        return Promise.reject({ status: 400, msg: 'Invalid order query' });
     }
 
     let queryString = `
